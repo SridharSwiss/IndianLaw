@@ -1,0 +1,64 @@
+{
+  "pack": "india-pii",
+  "description": "Detects India-specific PII patterns hardcoded in source files — Aadhaar numbers, PAN, IFSC, UPI VPA, voter ID",
+  "patterns": [
+    {
+      "id": "IPII-01",
+      "name": "Aadhaar number (12-digit, raw)",
+      "description": "12-digit number matching Aadhaar format found in source code or config. Raw Aadhaar must never be stored — store only masked form or UIDAI token.",
+      "regex": "\\b[2-9]{1}[0-9]{3}\\s?[0-9]{4}\\s?[0-9]{4}\\b",
+      "verify": "verhoeff",
+      "severity": "critical",
+      "obligation": "OBL-AADH-02",
+      "note": "Matches are passed through Verhoeff checksum validation in the scanner before reporting. False-positive rate is very low with validation."
+    },
+    {
+      "id": "IPII-02",
+      "name": "PAN card number",
+      "description": "Permanent Account Number (PAN) in standard Indian format. PAN found in source code may indicate hardcoded test data left in codebase or improper storage.",
+      "regex": "[A-Z]{5}[0-9]{4}[A-Z]{1}",
+      "severity": "high",
+      "obligation": "OBL-DPDP-10",
+      "note": "PAN is financial SPDI. Should never appear in source code. Check if it's a test PAN (AAAAA9999A is valid test pattern) and flag anyway."
+    },
+    {
+      "id": "IPII-03",
+      "name": "Indian bank IFSC code",
+      "description": "IFSC (Indian Financial System Code) in standard format. Found in code may indicate hardcoded account details.",
+      "regex": "[A-Z]{4}0[A-Z0-9]{6}",
+      "severity": "medium",
+      "obligation": "OBL-SPDI-01",
+      "note": "IFSC alone is not highly sensitive but combined with account number constitutes financial SPDI."
+    },
+    {
+      "id": "IPII-04",
+      "name": "UPI Virtual Payment Address (VPA)",
+      "description": "UPI VPA in the format handle@bank or name@upi. Hardcoded VPAs in source indicate potential payment credential exposure.",
+      "regex": "[a-zA-Z0-9.\\-_]{2,256}@[a-zA-Z]{2,64}",
+      "severity": "medium",
+      "obligation": "OBL-RBI-01",
+      "note": "High false-positive risk — email addresses also match. Scanner filters out common email domains (.com, .in, .org, .net, .gov) to reduce noise."
+    },
+    {
+      "id": "IPII-05",
+      "name": "Indian mobile number",
+      "description": "10-digit mobile number starting with 6-9 (Indian mobile format). Hardcoded in source may indicate test data not cleaned up or improper storage.",
+      "regex": "\\b[6-9][0-9]{9}\\b",
+      "severity": "low",
+      "obligation": "OBL-DPDP-10",
+      "note": "High false-positive risk with numbers in other contexts (port numbers, IDs). Only flag when near context keywords like 'phone', 'mobile', 'contact', 'number'."
+    },
+    {
+      "id": "IPII-06",
+      "name": "Voter ID number",
+      "description": "Indian Voter ID (EPIC) number format: 3 letters + 7 digits.",
+      "regex": "[A-Z]{3}[0-9]{7}",
+      "severity": "medium",
+      "obligation": "OBL-DPDP-10",
+      "note": "Relatively low false-positive rate. Check context — if near 'voter', 'epic', 'election', flag as high confidence."
+    }
+  ],
+  "exclude_extensions": [".min.js", ".map", ".lock", ".sum", ".png", ".jpg", ".gif", ".pdf", ".ico"],
+  "exclude_dirs": ["node_modules", ".git", "vendor", "dist", "build", ".next", "__pycache__"],
+  "context_lines": 2
+}

@@ -1,0 +1,71 @@
+{
+  "pack": "policy-artifacts",
+  "description": "Checks for presence or absence of required legal policy documents and disclosures in the codebase",
+  "file_presence_checks": [
+    {
+      "id": "POL-01",
+      "name": "Privacy policy",
+      "description": "A privacy policy document must exist and be accessible from the app. Required by DPDP Act, IT Act, and Consumer Protection Rules.",
+      "look_for_files": ["privacy-policy", "privacy_policy", "privacypolicy", "privacy.html", "privacy.md", "PRIVACY"],
+      "look_for_routes": ["/privacy", "/privacy-policy", "/legal/privacy"],
+      "look_for_patterns": ["privacy.?policy", "Privacy Policy"],
+      "severity": "high",
+      "obligation": "OBL-DPDP-02",
+      "required": true
+    },
+    {
+      "id": "POL-02",
+      "name": "Terms of Use / Terms of Service",
+      "description": "Terms of Use or Service Agreement must exist and be accessible.",
+      "look_for_files": ["terms", "terms-of-service", "terms-of-use", "tos", "terms.html", "terms.md"],
+      "look_for_routes": ["/terms", "/terms-of-service", "/tos", "/legal/terms"],
+      "look_for_patterns": ["terms.?of.?(use|service)", "Terms and Conditions"],
+      "severity": "medium",
+      "obligation": "OBL-INTR-03",
+      "required": true
+    },
+    {
+      "id": "POL-03",
+      "name": "Grievance officer contact",
+      "description": "Grievance officer contact information must be visible in the app. Required by DPDP Act, Consumer Protection Rules, and IT Rules 2021.",
+      "look_for_patterns": ["grievance.officer", "Grievance Officer", "grievance@", "nodal.officer"],
+      "severity": "high",
+      "obligation": "OBL-DPDP-06, OBL-ECOM-02, OBL-INTR-01",
+      "required": true
+    },
+    {
+      "id": "POL-04",
+      "name": "Accessibility statement",
+      "description": "Accessibility statement recommended for all public apps; mandatory for SEBI-regulated entities and government portals.",
+      "look_for_files": ["accessibility", "a11y-statement", "accessibility-statement", "accessibility.html"],
+      "look_for_routes": ["/accessibility", "/a11y"],
+      "look_for_patterns": ["accessibility.?statement", "Accessibility Statement", "WCAG", "IS 17802"],
+      "severity": "low",
+      "obligation": "OBL-A11Y-06",
+      "required": false
+    },
+    {
+      "id": "POL-05",
+      "name": "Cookie consent / DPDP consent banner",
+      "description": "Any web app collecting cookies or tracking data must show a consent mechanism before setting non-essential cookies.",
+      "look_for_patterns": ["cookie.?consent", "cookie.?banner", "consent.?manager", "DPDP.*consent", "accept.*cookies"],
+      "look_for_files": ["cookie-consent", "cookie-banner", "CookieBanner", "ConsentBanner"],
+      "severity": "high",
+      "obligation": "OBL-DPDP-01",
+      "required": true,
+      "applies_when": "web app"
+    },
+    {
+      "id": "POL-06",
+      "name": "Incident response plan / breach response",
+      "description": "An incident response document or runbook reduces legal exposure under DPDP Act §8(6) and CERT-In Directions 2022.",
+      "look_for_files": ["incident-response", "breach-response", "security-incident", "INCIDENT_RESPONSE", "runbook"],
+      "look_for_patterns": ["incident.?response", "breach.?notification", "CERT-In.*report"],
+      "severity": "medium",
+      "obligation": "OBL-DPDP-07, OBL-CERT-01",
+      "required": false,
+      "note": "Not required to be in the codebase — but its absence in project docs is a gap signal."
+    }
+  ],
+  "exclude_dirs": ["node_modules", ".git", "vendor", "dist", "build", ".next", "__pycache__"]
+}

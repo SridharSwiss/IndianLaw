@@ -1,0 +1,58 @@
+{
+  "pack": "accessibility",
+  "description": "Detects basic accessibility violations in HTML/JSX — WCAG 2.1 Level AA, IS 17802, RPwD Act §40",
+  "patterns": [
+    {
+      "id": "A11Y-01",
+      "name": "Image missing alt attribute",
+      "description": "img element with no alt attribute. Screen readers cannot describe the image to visually impaired users.",
+      "regex": "<img\\s(?![^>]*\\balt\\s*=)[^>]*/?>",
+      "severity": "medium",
+      "obligation": "OBL-A11Y-02",
+      "file_types": [".html", ".htm", ".jsx", ".tsx", ".vue", ".svelte", ".erb", ".ejs", ".hbs", ".phtml"],
+      "note": "Matches img tags that do not have alt= anywhere in their attributes."
+    },
+    {
+      "id": "A11Y-02",
+      "name": "HTML document missing lang attribute",
+      "description": "The root html element must declare the document language for screen readers.",
+      "regex": "<html(?![^>]*\\blang\\s*=)[^>]*>",
+      "severity": "medium",
+      "obligation": "OBL-A11Y-01",
+      "file_types": [".html", ".htm", ".erb", ".ejs"],
+      "note": "Check the main HTML template or document root. In React/Next.js check _document.js or the html element in the root layout."
+    },
+    {
+      "id": "A11Y-03",
+      "name": "Input with placeholder but no label",
+      "description": "Form input using only placeholder for labeling — placeholder disappears when typing and is not accessible to all assistive technologies.",
+      "regex": "<input[^>]+placeholder=['\"][^'\"]+['\"](?![^>]*\\bid\\s*=)[^>]*/?>",
+      "severity": "medium",
+      "obligation": "OBL-A11Y-03",
+      "file_types": [".html", ".htm", ".jsx", ".tsx", ".vue", ".svelte", ".erb", ".ejs"],
+      "note": "A separate check for associated label tags is done in the file-level analysis. This catches inputs with only placeholder and no id (so no label can be associated)."
+    },
+    {
+      "id": "A11Y-04",
+      "name": "Keyboard focus outline suppressed",
+      "description": "CSS removing the focus outline without replacement is a keyboard accessibility barrier. Visible focus is required by WCAG 2.1 SC 2.4.7.",
+      "regex": "outline\\s*:\\s*0\\s*;|outline\\s*:\\s*none\\s*;",
+      "severity": "medium",
+      "obligation": "OBL-A11Y-04",
+      "file_types": [".css", ".scss", ".sass", ".less", ".styl"],
+      "note": "Flag these locations for manual verification — outline:none is acceptable only if a custom focus indicator is provided (e.g., custom outline or box-shadow on :focus-visible)."
+    },
+    {
+      "id": "A11Y-05",
+      "name": "Interactive div/span without role or tabindex",
+      "description": "Div or span used as a button/link (with onClick) but without role='button' and keyboard event handling — not accessible by keyboard.",
+      "regex": "<(?:div|span)[^>]+onClick[^>]*>(?![^<]*<button)",
+      "severity": "low",
+      "obligation": "OBL-A11Y-04",
+      "file_types": [".jsx", ".tsx", ".vue", ".svelte"],
+      "note": "Replace with semantic <button> or add role='button', tabIndex={0}, and onKeyDown handler. Low severity as it may have keyboard handlers elsewhere."
+    }
+  ],
+  "exclude_dirs": ["node_modules", ".git", "vendor", "dist", "build", ".next", "__pycache__"],
+  "exclude_extensions": [".min.js", ".min.css", ".map"]
+}

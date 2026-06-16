@@ -1,0 +1,10 @@
+{
+  "name": "indian-law-compliance",
+  "version": "0.1.0",
+  "description": "Audits a codebase against Indian laws — DPDP Act, IT Act, CERT-In, RBI, accessibility, sector rules, and business compliance. NOT legal advice.",
+  "author": {
+    "name": "kousthubha-sky",
+    "url": "https://github.com/kousthubha-sky/indian-law-plugin"
+  },
+  "license": "MIT"
+}

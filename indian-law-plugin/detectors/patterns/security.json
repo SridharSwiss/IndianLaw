@@ -1,0 +1,93 @@
+{
+  "pack": "security",
+  "description": "Detects common security weaknesses that constitute failure of 'reasonable security safeguards' under DPDP Act §8 and IT Act §43A",
+  "patterns": [
+    {
+      "id": "SEC-01",
+      "name": "Hardcoded password or secret",
+      "description": "Literal string assigned to a variable that looks like a credential. Must use environment variables or a secrets manager.",
+      "regex": "(password|passwd|pwd|secret|api.?key|auth.?token|private.?key|jwt.?secret|db.?pass|database.?password|access.?key)\\s*[=:]\\s*['\"][^'\"]{6,}['\"]",
+      "case_insensitive": true,
+      "severity": "critical",
+      "obligation": "OBL-SEC-04",
+      "false_positive_filters": [
+        "process\\.env\\.",
+        "os\\.environ",
+        "getenv\\(",
+        "config\\[",
+        "vault\\.",
+        "secrets\\.get",
+        "placeholder",
+        "example",
+        "CHANGE_ME",
+        "YOUR_",
+        "your_",
+        "<.*>"
+      ]
+    },
+    {
+      "id": "SEC-02",
+      "name": "Private key block in source file",
+      "description": "PEM-encoded private key embedded directly in source code.",
+      "regex": "-----BEGIN (RSA |EC |DSA |OPENSSH )?PRIVATE KEY-----",
+      "severity": "critical",
+      "obligation": "OBL-SEC-04"
+    },
+    {
+      "id": "SEC-03",
+      "name": "MD5 hash applied to password",
+      "description": "MD5 is not acceptable for password hashing — it is too fast and unsalted hashes are trivially crackable. Use bcrypt, argon2id, or scrypt.",
+      "regex": "(md5|hashlib\\.md5|crypto\\.createHash\\(['\"]md5['\"]).*password|password.*md5",
+      "case_insensitive": true,
+      "severity": "critical",
+      "obligation": "OBL-SEC-03"
+    },
+    {
+      "id": "SEC-04",
+      "name": "SHA-1 hash applied to password",
+      "description": "SHA-1 alone is not acceptable for password hashing.",
+      "regex": "(sha1|sha-1|hashlib\\.sha1|crypto\\.createHash\\(['\"]sha1['\"]).*password|password.*sha1",
+      "case_insensitive": true,
+      "severity": "critical",
+      "obligation": "OBL-SEC-03"
+    },
+    {
+      "id": "SEC-05",
+      "name": "Plain HTTP API endpoint URL",
+      "description": "Hardcoded http:// URL for an API endpoint. All API calls handling personal data must use HTTPS.",
+      "regex": "http://(?!localhost|127\\.0\\.0\\.1|0\\.0\\.0\\.0)[a-zA-Z0-9.-]+(/[a-zA-Z0-9./?=&_%-]*)?",
+      "severity": "high",
+      "obligation": "OBL-SEC-02",
+      "false_positive_filters": ["example.com", "test.com", "localhost", "//", "<!--"]
+    },
+    {
+      "id": "SEC-06",
+      "name": "SQL query built by string concatenation",
+      "description": "SQL built by concatenating user-supplied values. Use parameterised queries instead.",
+      "regex": "(SELECT|INSERT|UPDATE|DELETE|WHERE)\\s+.*\\+\\s*(req\\.|request\\.|params\\.|body\\.|query\\.|input|user)",
+      "case_insensitive": true,
+      "severity": "high",
+      "obligation": "OBL-SEC-05"
+    },
+    {
+      "id": "SEC-07",
+      "name": "AWS access key ID hardcoded",
+      "description": "AWS access key ID (AKIA...) hardcoded in source. Must use IAM roles or environment variables.",
+      "regex": "AKIA[0-9A-Z]{16}",
+      "severity": "critical",
+      "obligation": "OBL-SEC-04"
+    },
+    {
+      "id": "SEC-08",
+      "name": "Placeholder encryption key",
+      "description": "Generic or trivially guessable encryption key value.",
+      "regex": "(encryption.?key|aes.?key|cipher.?key|SECRET_KEY)\\s*[=:]\\s*['\"]([a-z]+|[0-9]+|test|secret|password|key123|abc)['\"]",
+      "case_insensitive": true,
+      "severity": "high",
+      "obligation": "OBL-SEC-01"
+    }
+  ],
+  "exclude_extensions": [".min.js", ".map", ".lock", ".sum", ".png", ".jpg", ".gif", ".ico", ".test.js", ".spec.js", ".test.ts", ".spec.ts"],
+  "exclude_dirs": ["node_modules", ".git", "vendor", "dist", "build", ".next", "__pycache__", "__tests__", "test", "tests", "spec"],
+  "exclude_files": [".env.example", ".env.sample", "*.example.*", "CHANGELOG*", "README*"]
+}

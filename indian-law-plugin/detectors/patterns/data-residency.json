@@ -1,0 +1,43 @@
+{
+  "pack": "data-residency",
+  "description": "Detects cloud region configurations that place data outside India — relevant for DPDP cross-border transfer and RBI payment data localization",
+  "patterns": [
+    {
+      "id": "DRES-01",
+      "name": "Non-India AWS region",
+      "description": "AWS region code that is NOT ap-south-1 (Mumbai) or ap-south-2 (Hyderabad). Non-India regions trigger DPDP cross-border disclosure and RBI payment localization obligations.",
+      "regex": "us-east-[12]|us-west-[12]|eu-west-[123]|eu-central-[12]|ap-east-1|ap-northeast-[123]|ap-southeast-[1234]|sa-east-1|ca-central-1|af-south-1|me-south-1",
+      "severity": "high",
+      "obligation": "OBL-DPDP-08, OBL-RBI-01, OBL-CERT-03",
+      "note": "Check if the region is used for payment data or log storage — those have stricter localization requirements."
+    },
+    {
+      "id": "DRES-02",
+      "name": "Non-India GCP region",
+      "description": "GCP region that is NOT asia-south1 (Mumbai) or asia-south2 (Delhi). Same implications as DRES-01.",
+      "regex": "us-central1|us-east[14]|us-west[1234]|europe-west[1-9]|europe-central2|asia-east[12]|asia-northeast[123]|asia-southeast[12]|northamerica-northeast[12]|southamerica-east1",
+      "severity": "high",
+      "obligation": "OBL-DPDP-08, OBL-RBI-01, OBL-CERT-03"
+    },
+    {
+      "id": "DRES-03",
+      "name": "Non-India Azure region",
+      "description": "Azure region that is NOT 'Central India', 'South India', 'West India', 'jioindiacentral', or 'jioindiawest'.",
+      "regex": "eastus[2]?|westus[23]?|northeurope|westeurope|southeastasia|eastasia|australiaeast|japaneast|brazilsouth|canadacentral",
+      "severity": "high",
+      "obligation": "OBL-DPDP-08, OBL-RBI-01, OBL-CERT-03"
+    },
+    {
+      "id": "DRES-04",
+      "name": "Explicit non-India data storage comment/config",
+      "description": "Configuration value or comment explicitly naming a non-India location for data storage.",
+      "regex": "stored_in:\\s*(us|eu|europe|united.states|singapore|ireland|germany)|data.?center:\\s*(us|eu|europe|frankfurt|singapore|virginia)",
+      "severity": "medium",
+      "obligation": "OBL-DPDP-08",
+      "case_insensitive": true
+    }
+  ],
+  "exclude_extensions": [".min.js", ".map", ".lock", ".sum", ".png", ".jpg", ".gif", ".ico"],
+  "exclude_dirs": ["node_modules", ".git", "vendor", "dist", "build", ".next", "__pycache__"],
+  "high_risk_contexts": ["payment", "pay", "transaction", "log", "audit", "personal_data", "user_data"]
+}
