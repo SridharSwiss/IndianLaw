@@ -1,4 +1,5 @@
 ---
+name: india-compliance-audit
 description: Hybrid AI + deterministic compliance audit for Indian software — DPDP Act, IT Act, CERT-In, RBI, Aadhaar, accessibility, and sector-specific rules. NOT legal advice.
 ---
 
