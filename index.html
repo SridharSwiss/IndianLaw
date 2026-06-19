@@ -3,120 +3,45 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>52-Story Hyderabad Tower — Three.js Simulation</title>
+  <title>52-Story Hyderabad Tower — Three.js</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #0a0a1a; overflow: hidden; font-family: 'Segoe UI', sans-serif; }
-    #canvas-container { position: fixed; inset: 0; }
-
-    /* ── HUD ── */
-    #hud {
-      position: fixed; top: 0; left: 0; right: 0;
-      display: flex; justify-content: space-between; align-items: flex-start;
-      padding: 16px 20px; pointer-events: none; z-index: 10;
-    }
-    #title-block { pointer-events: none; }
-    #title-block h1 {
-      font-size: 18px; font-weight: 700; color: #fff;
-      text-shadow: 0 0 20px rgba(255,160,50,.6);
-      letter-spacing: 1px;
-    }
-    #title-block p { font-size: 11px; color: rgba(255,220,140,.75); margin-top: 2px; }
-
-    #info-panel {
-      background: rgba(8,8,20,.72); border: 1px solid rgba(255,160,50,.25);
-      border-radius: 10px; padding: 12px 16px; min-width: 200px;
-      backdrop-filter: blur(8px); pointer-events: none;
-    }
-    #info-panel h3 { font-size: 11px; color: rgba(255,160,50,.9); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
-    .stat { display: flex; justify-content: space-between; gap: 24px; margin: 4px 0; }
-    .stat span:first-child { font-size: 11px; color: rgba(255,255,255,.55); }
-    .stat span:last-child  { font-size: 11px; color: #fff; font-weight: 600; }
-
-    /* ── Controls Panel ── */
-    #controls {
-      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-      display: flex; gap: 8px; z-index: 10; pointer-events: all;
-    }
-    .btn {
-      background: rgba(8,8,20,.82); border: 1px solid rgba(255,160,50,.35);
-      color: rgba(255,220,140,.9); font-size: 11px; font-weight: 600;
-      padding: 8px 14px; border-radius: 20px; cursor: pointer;
-      transition: all .2s; letter-spacing: .5px; backdrop-filter: blur(8px);
-    }
-    .btn:hover, .btn.active {
-      background: rgba(255,140,30,.18); border-color: rgba(255,160,50,.75);
-      color: #fff; box-shadow: 0 0 12px rgba(255,140,30,.35);
-    }
-
-    /* ── Floor indicator ── */
-    #floor-bar {
-      position: fixed; right: 20px; top: 50%; transform: translateY(-50%);
-      display: flex; flex-direction: column; align-items: center; gap: 3px;
-      z-index: 10; pointer-events: none;
-    }
-    #floor-label { font-size: 10px; color: rgba(255,220,140,.7); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
-    .floor-tick {
-      width: 18px; height: 3px; border-radius: 2px;
-      background: rgba(255,255,255,.12); transition: background .3s;
-    }
-    .floor-tick.active { background: rgba(255,160,50,.9); width: 24px; }
-    #floor-number { font-size: 22px; font-weight: 700; color: rgba(255,160,50,.95); margin-top: 6px; }
-
-    /* ── Loading ── */
-    #loading {
-      position: fixed; inset: 0; background: #08080f;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      z-index: 100; transition: opacity .8s;
-    }
-    #loading h2 { font-size: 24px; color: rgba(255,160,50,.9); margin-bottom: 18px; letter-spacing: 3px; text-transform: uppercase; }
-    #loading p  { font-size: 12px; color: rgba(255,255,255,.4); margin-top: 8px; }
-    #progress-bar { width: 260px; height: 3px; background: rgba(255,255,255,.1); border-radius: 2px; overflow: hidden; }
-    #progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #ff8c1a, #ffd080); transition: width .4s; }
-
-    /* ── Tooltip ── */
-    #tooltip {
-      position: fixed; pointer-events: none; z-index: 20;
-      background: rgba(8,8,20,.9); border: 1px solid rgba(255,160,50,.4);
-      border-radius: 8px; padding: 8px 12px; font-size: 11px; color: #fff;
-      display: none; backdrop-filter: blur(6px); max-width: 180px;
-    }
-    #tooltip strong { display: block; color: rgba(255,200,80,1); margin-bottom: 3px; }
-
-    /* ── Day/Night slider ── */
-    #time-control {
-      position: fixed; bottom: 70px; left: 50%; transform: translateX(-50%);
-      display: flex; align-items: center; gap: 10px; z-index: 10;
-    }
-    #time-control label { font-size: 11px; color: rgba(255,220,140,.7); }
-    #time-slider {
-      -webkit-appearance: none; appearance: none;
-      width: 180px; height: 3px; border-radius: 2px;
-      background: linear-gradient(90deg, #1a1a3a, #ff8c1a, #ffd080, #87ceeb);
-      outline: none; cursor: pointer;
-    }
-    #time-slider::-webkit-slider-thumb {
-      -webkit-appearance: none; width: 14px; height: 14px;
-      border-radius: 50%; background: #fff; border: 2px solid #ff8c1a; cursor: pointer;
-    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#0a0a1a;overflow:hidden;font-family:'Segoe UI',sans-serif}
+    #cc{position:fixed;inset:0}
+    #hud{position:fixed;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-start;padding:16px 20px;pointer-events:none;z-index:10}
+    #title-block h1{font-size:18px;font-weight:700;color:#fff;text-shadow:0 0 20px rgba(255,160,50,.6);letter-spacing:1px}
+    #title-block p{font-size:11px;color:rgba(255,220,140,.75);margin-top:2px}
+    #info-panel{background:rgba(8,8,20,.72);border:1px solid rgba(255,160,50,.25);border-radius:10px;padding:12px 16px;min-width:200px;backdrop-filter:blur(8px);pointer-events:none}
+    #info-panel h3{font-size:11px;color:rgba(255,160,50,.9);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+    .stat{display:flex;justify-content:space-between;gap:24px;margin:4px 0}
+    .stat span:first-child{font-size:11px;color:rgba(255,255,255,.55)}
+    .stat span:last-child{font-size:11px;color:#fff;font-weight:600}
+    #controls{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:10;pointer-events:all;flex-wrap:wrap;justify-content:center}
+    .btn{background:rgba(8,8,20,.82);border:1px solid rgba(255,160,50,.35);color:rgba(255,220,140,.9);font-size:11px;font-weight:600;padding:8px 14px;border-radius:20px;cursor:pointer;transition:all .2s;letter-spacing:.5px;backdrop-filter:blur(8px)}
+    .btn:hover,.btn.active{background:rgba(255,140,30,.18);border-color:rgba(255,160,50,.75);color:#fff;box-shadow:0 0 12px rgba(255,140,30,.35)}
+    #floor-bar{position:fixed;right:20px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:3px;z-index:10;pointer-events:none}
+    #floor-label{font-size:10px;color:rgba(255,220,140,.7);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+    .floor-tick{width:18px;height:3px;border-radius:2px;background:rgba(255,255,255,.12);transition:background .3s}
+    .floor-tick.active{background:rgba(255,160,50,.9);width:24px}
+    #floor-number{font-size:22px;font-weight:700;color:rgba(255,160,50,.95);margin-top:6px}
+    #loading{position:fixed;inset:0;background:#08080f;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;transition:opacity .8s}
+    #loading h2{font-size:24px;color:rgba(255,160,50,.9);margin-bottom:18px;letter-spacing:3px;text-transform:uppercase}
+    #loading p{font-size:12px;color:rgba(255,255,255,.4);margin-top:8px}
+    #pb{width:260px;height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden}
+    #pf{height:100%;width:0%;background:linear-gradient(90deg,#ff8c1a,#ffd080);transition:width .4s}
+    #tooltip{position:fixed;pointer-events:none;z-index:20;background:rgba(8,8,20,.9);border:1px solid rgba(255,160,50,.4);border-radius:8px;padding:8px 12px;font-size:11px;color:#fff;display:none;backdrop-filter:blur(6px);max-width:200px}
+    #tooltip strong{display:block;color:rgba(255,200,80,1);margin-bottom:3px}
+    #time-control{position:fixed;bottom:68px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:10px;z-index:10}
+    #time-control label{font-size:13px;color:rgba(255,220,140,.7)}
+    #ts{-webkit-appearance:none;appearance:none;width:180px;height:3px;border-radius:2px;background:linear-gradient(90deg,#1a1a3a,#ff8c1a,#ffd080,#87ceeb);outline:none;cursor:pointer}
+    #ts::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#fff;border:2px solid #ff8c1a;cursor:pointer}
   </style>
 </head>
 <body>
-
-<div id="loading">
-  <h2>Hyderabad Tower</h2>
-  <div id="progress-bar"><div id="progress-fill"></div></div>
-  <p id="loading-text">Initialising scene…</p>
-</div>
-
-<div id="canvas-container"></div>
-
-<!-- HUD -->
+<div id="loading"><h2>Hyderabad Tower</h2><div id="pb"><div id="pf"></div></div><p id="lt">Loading Three.js…</p></div>
+<div id="cc"></div>
 <div id="hud">
-  <div id="title-block">
-    <h1>HYDERABAD TOWER · 52F</h1>
-    <p>Jubilee Hills, Hyderabad · 247 m · 2025</p>
-  </div>
+  <div id="title-block"><h1>HYDERABAD TOWER · 52F</h1><p>Jubilee Hills, Hyderabad · 247 m · 2025</p></div>
   <div id="info-panel">
     <h3>Building Stats</h3>
     <div class="stat"><span>Height</span><span>247 m</span></div>
@@ -125,46 +50,285 @@
     <div class="stat"><span>Facade</span><span>High-Perf Glass</span></div>
     <div class="stat"><span>Structural</span><span>RC Core + Steel</span></div>
     <div class="stat"><span>Use</span><span>Mixed-Use</span></div>
-    <div class="stat" id="stat-time"><span>Time</span><span id="time-val">Day</span></div>
-    <div class="stat"><span>FPS</span><span id="fps-val">—</span></div>
+    <div class="stat"><span>Time</span><span id="tv">Day</span></div>
+    <div class="stat"><span>FPS</span><span id="fps">—</span></div>
   </div>
 </div>
-
-<!-- Floor bar (right side) -->
-<div id="floor-bar">
-  <div id="floor-label">Floor</div>
-  <div id="floor-ticks"></div>
-  <div id="floor-number">—</div>
-</div>
-
-<!-- Time of day -->
-<div id="time-control">
-  <label>🌙</label>
-  <input type="range" id="time-slider" min="0" max="100" value="65" />
-  <label>☀️</label>
-</div>
-
-<!-- Controls -->
+<div id="floor-bar"><div id="floor-label">Floor</div><div id="ft"></div><div id="fn">—</div></div>
+<div id="time-control"><label>🌙</label><input type="range" id="ts" min="0" max="100" value="65"/><label>☀️</label></div>
 <div id="controls">
-  <button class="btn" id="btn-orbit">Orbit</button>
-  <button class="btn" id="btn-fly">Fly-Through</button>
-  <button class="btn" id="btn-lobby">Lobby</button>
-  <button class="btn" id="btn-roof">Rooftop</button>
-  <button class="btn" id="btn-exterior">Exterior</button>
-  <button class="btn" id="btn-xray">X-Ray</button>
-  <button class="btn" id="btn-night">Auto-Night</button>
+  <button class="btn" id="b-orbit">Orbit</button>
+  <button class="btn" id="b-fly">Fly-Through</button>
+  <button class="btn" id="b-lobby">Lobby</button>
+  <button class="btn" id="b-roof">Rooftop</button>
+  <button class="btn" id="b-ext">Exterior</button>
+  <button class="btn" id="b-xray">X-Ray</button>
+  <button class="btn" id="b-night">Auto-Night</button>
 </div>
+<div id="tooltip"><strong id="tt"></strong><span id="tb"></span></div>
+<script type="module">
+import*as T from'https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.min.js';
+import{OrbitControls}from'https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/controls/OrbitControls.js';
+import{RoomEnvironment}from'https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/environments/RoomEnvironment.js';
 
-<div id="tooltip"><strong id="tt-title"></strong><span id="tt-body"></span></div>
+const pf=document.getElementById('pf'),lt=document.getElementById('lt');
+const prog=(p,m)=>{pf.style.width=p+'%';if(m)lt.textContent=m;};
 
-<script type="importmap">
-{
-  "imports": {
-    "three": "https://unpkg.com/three@0.165.0/build/three.module.js",
-    "three/addons/": "https://unpkg.com/three@0.165.0/examples/jsm/"
+const FC=52,FH=4.75,BH=FC*FH,BW=42,BD=38,SS=38,PF=6,PH=PF*FH;
+
+const cc=document.getElementById('cc');
+const renderer=new T.WebGLRenderer({antialias:true,logarithmicDepthBuffer:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setSize(innerWidth,innerHeight);
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=T.PCFSoftShadowMap;
+renderer.toneMapping=T.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1;
+renderer.outputColorSpace=T.SRGBColorSpace;
+cc.appendChild(renderer.domElement);
+
+const scene=new T.Scene();
+const camera=new T.PerspectiveCamera(55,innerWidth/innerHeight,.5,8000);
+camera.position.set(180,80,180);
+const pmrem=new T.PMREMGenerator(renderer);
+pmrem.compileEquirectangularShader();
+scene.environment=pmrem.fromScene(new RoomEnvironment()).texture;
+
+const ctrl=new OrbitControls(camera,renderer.domElement);
+ctrl.enableDamping=true;ctrl.dampingFactor=.06;ctrl.minDistance=20;ctrl.maxDistance=900;
+ctrl.maxPolarAngle=Math.PI/2.02;ctrl.target.set(0,BH*.45,0);ctrl.update();
+
+const m=o=>new T.MeshStandardMaterial(o);
+const box=(w,h,d,mt,rx=0,ry=0,rz=0)=>{const x=new T.Mesh(new T.BoxGeometry(w,h,d),mt);x.rotation.set(rx,ry,rz);x.castShadow=x.receiveShadow=true;return x;};
+const cyl=(r,h,s,mt)=>{const x=new T.Mesh(new T.CylinderGeometry(r,r,h,s),mt);x.castShadow=x.receiveShadow=true;return x;};
+const add=o=>scene.add(o);
+
+const M={
+  con:m({color:0xc8bfb0,roughness:.85,metalness:.05}),
+  con2:m({color:0xb8af9f,roughness:.9,metalness:0}),
+  core:m({color:0xa89888,roughness:.8,metalness:0}),
+  gl:m({color:0x7ab8d4,roughness:.05,metalness:.1,transparent:true,opacity:.72,side:T.DoubleSide}),
+  gld:m({color:0x4a8aaa,roughness:.05,metalness:.15,transparent:true,opacity:.78,side:T.DoubleSide}),
+  mul:m({color:0x888888,roughness:.3,metalness:.7}),
+  stl:m({color:0xaaaaaa,roughness:.25,metalness:.9}),
+  al:m({color:0xcccccc,roughness:.2,metalness:.8}),
+  org:m({color:0xe87820,roughness:.25,metalness:.7}),
+  pave:m({color:0x6a6a6a,roughness:.95,metalness:0}),
+  grs:m({color:0x3a7a2a,roughness:1,metalness:0}),
+  wat:m({color:0x1a6090,roughness:.1,metalness:.3,transparent:true,opacity:.8}),
+  mrb:m({color:0xf0ead8,roughness:.08,metalness:.05}),
+  gld2:m({color:0xd4a020,roughness:.2,metalness:.9}),
+  sgn:m({color:0xff8800,roughness:.4,metalness:.2,emissive:0xff6600,emissiveIntensity:.4}),
+  heli:m({color:0x303030,roughness:.9,metalness:0}),
+  heliH:m({color:0xffff00,roughness:.5,metalness:0,emissive:0xffdd00,emissiveIntensity:.3}),
+  sky:m({color:0x87ceeb,roughness:1,metalness:0,side:T.BackSide}),
+  gnd:m({color:0x4a4a3a,roughness:1,metalness:0}),
+  pod:m({color:0xd4c8a8,roughness:.55,metalness:.1}),
+};
+
+prog(8,'Sky…');
+const skyM=new T.Mesh(new T.SphereGeometry(3500,24,16),M.sky.clone());add(skyM);
+const hzM=m({color:0xe89040,transparent:true,opacity:.5,side:T.BackSide});
+const hz=new T.Mesh(new T.CylinderGeometry(3400,3500,600,32,1,true),hzM);hz.position.y=-200;add(hz);
+
+const amb=new T.AmbientLight(0xfff5e0,.35);add(amb);
+const sun=new T.DirectionalLight(0xffeedd,2.2);
+sun.position.set(200,350,120);sun.castShadow=true;
+sun.shadow.mapSize.set(2048,2048);
+sun.shadow.camera.near=10;sun.shadow.camera.far=1200;
+sun.shadow.camera.left=-300;sun.shadow.camera.right=300;
+sun.shadow.camera.top=450;sun.shadow.camera.bottom=-300;
+sun.shadow.bias=-.0003;add(sun);
+const f1=new T.DirectionalLight(0x8090ff,.4);f1.position.set(-200,100,-200);add(f1);
+const f2=new T.DirectionalLight(0xffd0a0,.25);f2.position.set(0,-100,200);add(f2);
+const csp=new T.SpotLight(0xff9030,5,350,Math.PI/12,.4,1.5);
+csp.position.set(0,BH+80,0);csp.target.position.set(0,BH,0);add(csp);add(csp.target);
+const lf=new T.PointLight(0xffeebb,3,60,1.5);lf.position.set(0,PH*.5,0);add(lf);
+
+prog(14,'Ground…');
+const gnd=new T.Mesh(new T.PlaneGeometry(2400,2400,40,40),M.gnd);gnd.rotation.x=-Math.PI/2;gnd.receiveShadow=true;add(gnd);
+[[30,1200,-130,0],[30,1200,130,0],[1200,30,0,-140],[1200,30,0,140]].forEach(([w,d,x,z])=>{const r=new T.Mesh(new T.PlaneGeometry(w,d),M.pave);r.rotation.x=-Math.PI/2;r.position.set(x,.02,z);r.receiveShadow=true;add(r);});
+const pav=new T.Mesh(new T.PlaneGeometry(200,200),M.pave);pav.rotation.x=-Math.PI/2;pav.position.y=.01;pav.receiveShadow=true;add(pav);
+[[-140,60,80,50],[140,-60,80,50],[-60,-140,50,80],[60,140,50,80]].forEach(([x,z,w,d])=>{const g=new T.Mesh(new T.PlaneGeometry(w,d),M.grs);g.rotation.x=-Math.PI/2;g.position.set(x,.03,z);g.receiveShadow=true;add(g);});
+const pool=new T.Mesh(new T.PlaneGeometry(60,20),M.wat);pool.rotation.x=-Math.PI/2;pool.position.set(0,.15,-110);add(pool);
+const pem=m({color:0x888870,roughness:.7,metalness:.1});
+[-10.5,10.5].forEach(x=>{const e=new T.Mesh(new T.BoxGeometry(1,.4,20),pem);e.position.set(x,.2,-110);add(e);});
+[-30.5,30.5].forEach(z=>{const e=new T.Mesh(new T.BoxGeometry(62,.4,1),pem);e.position.set(0,.2,-110+z);add(e);});
+
+prog(20,'City context…');
+[[-280,-180,55,45,95],[-340,60,40,35,75],[-260,200,60,50,110],[300,-160,50,40,85],[360,40,45,38,65],[280,220,55,48,100],[-150,-300,48,42,60],[200,-280,52,46,90],[0,-320,60,50,45],[-380,-350,70,58,70],[400,320,65,55,80],[-200,350,58,45,55]].forEach(([x,z,w,d,h])=>{const b=new T.Mesh(new T.BoxGeometry(w,h,d),m({color:0x889090,roughness:.7,metalness:.05}));b.position.set(x,h/2,z);b.castShadow=b.receiveShadow=true;add(b);});
+const ttm=m({color:0xaaaaaa,roughness:.3,metalness:.7});
+for(let i=0;i<6;i++){const c=cyl(1.5-i*.18,22,8,ttm);c.position.set(-450,i*22+11,-250);add(c);}
+
+const trkM=m({color:0x5c3d1a,roughness:.9,metalness:0}),folM=m({color:0x2d6a20,roughness:1,metalness:0});
+function addTree(x,z,sc=1){const t=cyl(.3*sc,4*sc,6,trkM);t.position.set(x,2*sc,z);add(t);[0,1.5,3].forEach((yo,i)=>{const c=new T.Mesh(new T.ConeGeometry((3.5-i*.8)*sc,4*sc,8),folM);c.position.set(x,4*sc+yo*sc,z);c.castShadow=true;add(c);});}
+[[-70,-80],[70,-80],[-70,80],[70,80],[-90,0],[90,0],[-80,-40],[80,40],[-160,-120],[160,-120],[-160,120],[160,120],[-30,-115],[30,-115],[0,-90]].forEach(([x,z])=>addTree(x,z,.8+Math.random()*.5));
+
+const polM=m({color:0x888888,roughness:.4,metalness:.6}),lamM=m({color:0xffffdd,emissive:0xffff80,emissiveIntensity:1.5,roughness:1,metalness:0});
+function addSL(x,z){const p=cyl(.12,9,6,polM);p.position.set(x,4.5,z);add(p);const arm=new T.Mesh(new T.BoxGeometry(.1,.1,2.5),polM);arm.position.set(x,9,z+1.25);add(arm);const l=new T.Mesh(new T.SphereGeometry(.25,8,6),lamM);l.position.set(x,9,z+2.5);add(l);const pl=new T.PointLight(0xfff5cc,2,28,2);pl.position.set(x,9,z+2.5);add(pl);}
+[[-100,-105],[100,-105],[-100,105],[100,105],[-100,-50],[100,-50],[-100,50],[100,50],[-50,-130],[50,-130],[-50,130],[50,130]].forEach(([x,z])=>addSL(x,z));
+
+prog(30,'Entry plaza…');
+const drv=new T.Mesh(new T.PlaneGeometry(22,70),m({color:0x8a8070,roughness:.85,metalness:0}));drv.rotation.x=-Math.PI/2;drv.position.set(0,.05,-75);add(drv);
+for(let i=-3;i<=3;i++){if(!i)continue;const b=cyl(.18,.9,8,m({color:0xffcc00,roughness:.5,metalness:.2,emissive:0xffaa00,emissiveIntensity:.4}));b.position.set(i*3.5,.45,-52);add(b);}
+const can=new T.Mesh(new T.BoxGeometry(36,.5,14),m({color:0xddd8c8,roughness:.5,metalness:.2}));can.position.set(0,10,-28);can.castShadow=true;add(can);
+[-15,0,15].forEach(x=>{const c=cyl(.5,10,8,m({color:0xcccccc,roughness:.3,metalness:.5}));c.position.set(x,5,-34);add(c);});
+for(let s=0;s<4;s++){const st=new T.Mesh(new T.BoxGeometry(30-s*2,.3,1.8),m({color:0xd0c8b0,roughness:.6,metalness:0}));st.position.set(0,.15+s*.3,-22+s*1.8);add(st);}
+[-55,55].forEach((x,i)=>{const p=cyl(.18,20,6,M.al);p.position.set(x,10,-80);add(p);const f=new T.Mesh(new T.PlaneGeometry(4,2.5),m({color:i?0x138808:0xff9933,roughness:.8,metalness:0,side:T.DoubleSide}));f.position.set(x+2,20,-80);add(f);});
+
+prog(38,'Podium…');
+const pod=new T.Group();add(pod);
+const pb=box(BW+16,PH,BD+12,M.pod);pb.position.y=PH/2;pod.add(pb);
+const pm1=m({color:0xd8c8a0,roughness:.5,metalness:.1}),pm2=m({color:0xc8b890,roughness:.6,metalness:.05});
+for(let f=0;f<PF;f++){const y=f*FH+FH/2,pm=f%2?pm2:pm1,cols=Math.floor((BW+16)/2.5);for(let c=0;c<cols;c++){const px=-((BW+16)/2)+(c+.5)*2.5;const p1=box(2.35,FH-.8,.12,pm);p1.position.set(px,y,(BD+12)/2+.05);pod.add(p1);const p2=box(2.35,FH-.8,.12,pm);p2.position.set(px,y,-(BD+12)/2-.05);pod.add(p2);}}
+const lgm=m({color:0x9ad4f0,roughness:.03,metalness:.1,transparent:true,opacity:.65,side:T.DoubleSide});
+const lg=new T.Mesh(new T.BoxGeometry(28,PH-1,.15),lgm);lg.position.set(0,PH/2,(BD+12)/2+.2);lg.userData={label:'Grand Lobby Facade',desc:'Triple-glazed 12m curtain wall, electrochromic tinting'};pod.add(lg);
+const rd=box(BW+16,.4,BD+12,m({color:0x7a9060,roughness:.9,metalness:0}));rd.position.y=PH+.2;pod.add(rd);
+const potM=m({color:0xa05030,roughness:.8,metalness:0}),flM=m({color:0x2a8020,roughness:1,metalness:0});
+for(let i=-3;i<=3;i++){[1,-1].forEach(s=>{const pt=cyl(.8,1,8,potM);pt.position.set(i*8,PH+1,s*((BD+12)/2-3));pod.add(pt);const fl=new T.Mesh(new T.SphereGeometry(1.2,8,6),flM);fl.position.set(i*8,PH+2.3,s*((BD+12)/2-3));pod.add(fl);});}
+
+prog(44,'Lobby…');
+const lob=new T.Group();add(lob);
+const lbf=box(BW-2,.2,BD-2,M.mrb);lbf.position.y=.1;lob.add(lbf);
+const lwm=m({color:0xf0e8d0,roughness:.4,metalness:0});
+[-BW/2+1,BW/2-1].forEach(x=>{const w=box(1,PH,BD-2,lwm);w.position.set(x,PH/2,0);lob.add(w);});
+[-(BD/2)+1,(BD/2)-1].forEach(z=>{const w=box(BW-2,PH,1,lwm);w.position.set(0,PH/2,z);lob.add(w);});
+const dsk=new T.Mesh(new T.CylinderGeometry(8,8.5,1.1,32,1,false,-Math.PI/3,Math.PI*1.3),m({color:0x4a3020,roughness:.3,metalness:.3}));dsk.position.set(0,.55,-4);dsk.userData={label:'Reception Desk',desc:'Curved dark-stone concierge counter'};lob.add(dsk);
+const fw=box(22,6,.4,m({color:0xe8d8c0,roughness:.1,metalness:.05}));fw.position.set(0,3,-(BD/2)+2);lob.add(fw);
+const sg=new T.Mesh(new T.BoxGeometry(12,1.5,.1),M.sgn);sg.position.set(0,4.5,-(BD/2)+2.3);lob.add(sg);
+const colM=m({color:0xd4c8a0,roughness:.15,metalness:.1}),capM=m({color:0xd4a020,roughness:.3,metalness:.7});
+[[-10,-6],[10,-6],[-10,6],[10,6]].forEach(([x,z])=>{const c=cyl(1,PH,16,colM);c.position.set(x,PH/2,z);lob.add(c);const cap=cyl(1.4,.4,16,capM);cap.position.set(x,PH-.2,z);lob.add(cap);});
+const lc=box(BW-2,.3,BD-2,m({color:0xfaf5ec,roughness:.5,metalness:0}));lc.position.y=PH-.15;lob.add(lc);
+const clm=m({color:0xffffff,emissive:0xffeebb,emissiveIntensity:1.2,roughness:1,metalness:0});
+for(let x=-15;x<=15;x+=6)for(let z=-14;z<=14;z+=6){const cl=new T.Mesh(new T.CircleGeometry(.4,12),clm);cl.rotation.x=Math.PI/2;cl.position.set(x,PH-.28,z);lob.add(cl);}
+const fo=cyl(4,.5,24,M.mrb);fo.position.set(0,.25,10);fo.userData={label:'Lobby Fountain',desc:'Circular water feature, Deccani geometric motif'};lob.add(fo);
+const fw2=new T.Mesh(new T.CylinderGeometry(3.4,3.4,.15,24),M.wat);fw2.position.set(0,.5,10);lob.add(fw2);
+const evm=m({color:0xaaaaaa,roughness:.2,metalness:.8});
+for(let e=-3;e<=3;e++){if(!e)continue;const d=box(2.2,2.8,.1,evm);d.position.set(e*4,1.4,-(BD/2)+1.5);lob.add(d);const led=m({color:0xff8000,emissive:0xff6000,emissiveIntensity:1.5,roughness:1,metalness:0});const n=new T.Mesh(new T.PlaneGeometry(.8,.4),led);n.position.set(e*4,3,-(BD/2)+1.5);lob.add(n);}
+
+prog(50,'Core…');
+const coreG=new T.Group();add(coreG);
+const coreW=14,coreD=12;
+const corM=box(coreW,BH,coreD,M.core);corM.position.y=BH/2;corM.userData={label:'RC Shear Core',desc:'800mm RC core, M60 grade concrete'};coreG.add(corM);
+const sdm=m({color:0x222222,roughness:1,metalness:0});
+for(let f=0;f<FC;f++){const y=f*FH+FH*.5;[-1,1].forEach(s=>{const sh=box(2,FH*.7,.15,sdm);sh.position.set(s*4,y,coreD/2+.08);coreG.add(sh);});}
+
+prog(58,'Tower floors…');
+const twr=new T.Group();add(twr);twr.userData.floors=[];
+const nw=[];
+for(let f=PF;f<FC;f++){
+  const isSB=f>=SS,sh=isSB?(f-SS)*.18:0;
+  const fw2=BW-sh*2,fd=BD-sh*2,y=f*FH,gh=FH-.5;
+  const gmat=f%3===0?M.gld:M.gl;
+  const sl=box(fw2+.5,.35,fd+.5,f%2?M.con2:M.con);sl.position.y=y+.175;
+  sl.userData={floorIndex:f,label:`Floor ${f+1}`,desc:`Level ${f+1} — ${f<15?'Office':f<42?'Premium Office':f<50?'Sky Lounge / Hotel':'Penthouse'}`};
+  twr.add(sl);twr.userData.floors.push(sl);
+  const cols=Math.floor(fw2/3.5);
+  for(let c=0;c<cols;c++){
+    const gp1=new T.Mesh(new T.BoxGeometry(3.2,gh,.08),gmat);gp1.position.set(-fw2/2+(c+.5)*(fw2/cols),y+gh/2+.4,fd/2+.04);twr.add(gp1);
+    const gp2=new T.Mesh(new T.BoxGeometry(3.2,gh,.08),gmat);gp2.position.set(-fw2/2+(c+.5)*(fw2/cols),y+gh/2+.4,-fd/2-.04);twr.add(gp2);
   }
+  const colsD=Math.floor(fd/3.5);
+  for(let c=0;c<colsD;c++){['E','W'].forEach(side=>{const gp=new T.Mesh(new T.BoxGeometry(.08,gh,3.2),gmat);gp.position.set(side==='E'?fw2/2+.04:-fw2/2-.04,y+gh/2+.4,-fd/2+(c+.5)*(fd/colsD));twr.add(gp);});}
+  const ms=fw2/cols;for(let c=0;c<=cols;c++){const ml=box(.12,FH,.14,M.mul);ml.position.set(-fw2/2+c*ms,y+FH/2,fd/2);twr.add(ml);const ml2=box(.12,FH,.14,M.mul);ml2.position.set(-fw2/2+c*ms,y+FH/2,-fd/2);twr.add(ml2);}
+  if(f%4===0||isSB){const sp=box(fw2+.6,.45,fd+.6,M.org);sp.position.y=y+.22;twr.add(sp);}
+  if(f===25||f===38){const mf=box(fw2+1,FH*.8,fd+1,m({color:0x555566,roughness:.6,metalness:.3}));mf.position.y=y+FH*.4;mf.userData={label:`Mechanical Floor ${f+1}`,desc:'HVAC, fire tanks, switchgear, sky-lobby transfer'};twr.add(mf);}
+  const wm=m({color:0xfff5d0,roughness:1,metalness:0,emissive:0xffd060,emissiveIntensity:0});nw.push(wm);
+  const wc=Math.floor(fw2/3.5);
+  for(let c=0;c<wc;c++){if(Math.random()>.7)continue;const sd=Math.random()>.5?1:-1;const wp=new T.Mesh(new T.PlaneGeometry(2,2.5),wm);wp.position.set(-fw2/2+(c+.5)*(fw2/wc),y+FH*.55,sd>0?fd/2+.12:-fd/2-.12);if(sd<0)wp.rotation.y=Math.PI;add(wp);}
 }
+
+prog(68,'Columns…');
+const cm=m({color:0xc8c0b0,roughness:.6,metalness:.1});
+[[1,1],[-1,1],[1,-1],[-1,-1]].forEach(([sx,sz])=>{const c=cyl(.9,BH,12,cm);c.position.set(sx*(BW/2-.4),BH/2,sz*(BD/2-.4));add(c);});
+[25,38].forEach(f=>{const y=f*FH+FH/2;[-1,1].forEach(i=>{const d=box(.3,.3,BD*.6,M.stl,0,0,Math.PI/8*i);d.position.set(i*(BW/2-2),y,0);add(d);});[BD/2+.15,-BD/2-.15].forEach(z=>{const b=box(BW+2,.6,.3,M.stl);b.position.set(0,y,z);add(b);});});
+const slf=box(BW-2,.2,BD-2,m({color:0xf8f2e8,roughness:.2,metalness:.02}));slf.position.y=25*FH+.1;slf.userData={label:'Sky Lobby — Floor 26',desc:'Double-height transfer floor, sky café, express elevators'};add(slf);
+const sll=new T.PointLight(0xffeebb,4,30,1.8);sll.position.set(0,25*FH+3,0);add(sll);
+
+prog(76,'Crown…');
+const CB=FC*FH,crn=new T.Group();add(crn);
+const par=box(BW*.65,4,BD*.65,m({color:0xb8b0a0,roughness:.5,metalness:.1}));par.position.y=CB+2;crn.add(par);
+for(let i=0;i<8;i++){const a=(i/8)*Math.PI*2;const fin=box(.1,14,10,m({color:0x7ab8d4,roughness:.05,metalness:.1,transparent:true,opacity:.55,side:T.DoubleSide}));fin.position.set(Math.cos(a)*12,CB+10,Math.sin(a)*8);fin.rotation.y=a;crn.add(fin);}
+const spr=cyl(1.2,35,8,M.stl);spr.position.y=CB+21.5;crn.add(spr);
+const obs=cyl(7,1,24,m({color:0xaaaaaa,roughness:.2,metalness:.7}));obs.position.y=CB+22;obs.userData={label:'Observation Deck',desc:'360° panoramic deck, 247m above street level'};crn.add(obs);
+const rail=cyl(7.2,1.5,24,m({color:0x9dd8f0,roughness:.05,metalness:.1,transparent:true,opacity:.5,side:T.DoubleSide}));rail.position.y=CB+22.75;crn.add(rail);
+const tip=new T.Mesh(new T.ConeGeometry(.6,8,8),M.gld2);tip.position.y=CB+43;crn.add(tip);
+const bkM=m({color:0xff2200,emissive:0xff1100,emissiveIntensity:2,roughness:1,metalness:0});
+const bk=new T.Mesh(new T.SphereGeometry(.4,8,6),bkM);bk.position.y=CB+47.5;crn.add(bk);
+const bkL=new T.PointLight(0xff2200,5,40,2);bkL.position.copy(bk.position);crn.add(bkL);
+
+prog(82,'Helipad…');
+const hy=CB+5;
+const hp=cyl(10,.35,32,M.heli);hp.position.set(0,hy,0);hp.userData={label:'Rooftop Helipad',desc:'DGCA-compliant VIP helipad, 12m FATO, TLOF lighting'};add(hp);
+const hm=new T.Mesh(new T.PlaneGeometry(6,6),M.heliH);hm.rotation.x=-Math.PI/2;hm.position.set(0,hy+.2,0);add(hm);
+for(let i=0;i<16;i++){const a=(i/16)*Math.PI*2;const hl=new T.Mesh(new T.SphereGeometry(.2,6,4),m({color:0x00ff88,emissive:0x00ff88,emissiveIntensity:2,roughness:1}));hl.position.set(Math.cos(a)*9.8,hy+.3,Math.sin(a)*9.8);add(hl);}
+const mcM=m({color:0x667766,roughness:.7,metalness:.3}),mcM2=m({color:0x888888,roughness:.4,metalness:.6});
+[[-12,15],[12,15],[0,-14],[-14,0],[14,0]].forEach(([x,z])=>{const u=box(5,2.5,4,mcM);u.position.set(x,CB+3.25,z);add(u);[-.8,.8].forEach(dx=>{const f=cyl(.9,.5,16,mcM2);f.position.set(x+dx,CB+4.75,z);add(f);});});
+[-18,18].forEach(x=>{const ct=cyl(3.5,7,16,mcM);ct.position.set(x,CB+5.5,12);add(ct);const ctt=cyl(4,.5,16,m({color:0x445544,roughness:.8,metalness:.2}));ctt.position.set(x,CB+9.25,12);add(ctt);});
+
+prog(88,'LED facade…');
+const ldM=m({color:0xff8c1a,roughness:1,metalness:0,emissive:0xff6600,emissiveIntensity:.4});
+for(let i=-2;i<=2;i++){const ls=box(.25,BH-PH,.25,ldM);ls.position.set(i*(BW/4.5),PH+(BH-PH)/2,BD/2+.3);add(ls);const ls2=ls.clone();ls2.position.z=-BD/2-.3;add(ls2);}
+
+const ftEl=document.getElementById('ft'),fnEl=document.getElementById('fn'),tks=[];
+for(let f=FC;f>=1;f--){const t=document.createElement('div');t.className='floor-tick';t.dataset.f=f;ftEl.appendChild(t);tks.push({f,el:t});}
+
+const rc=new T.Raycaster(),mu=new T.Vector2(-999,-999);
+const tip=document.getElementById('tooltip'),ttEl=document.getElementById('tt'),tbEl=document.getElementById('tb');
+renderer.domElement.addEventListener('mousemove',e=>{mu.x=(e.clientX/innerWidth)*2-1;mu.y=-(e.clientY/innerHeight)*2+1;tip.style.left=(e.clientX+14)+'px';tip.style.top=(e.clientY-10)+'px';});
+
+const ts=document.getElementById('ts'),tvEl=document.getElementById('tv');
+function setTime(t){
+  const isN=t<35||t>90,isD=(t>=75&&t<=90)||(t>=25&&t<=40);
+  let sc,hc,si,ai;
+  const C=T.Color;
+  if(t<25){sc=new C(0x020410);hc=new C(0x080820);si=0;ai=.06;sun.color.setHex(0x000022);}
+  else if(t<40){const p=(t-25)/15;sc=new C(0x020410).lerp(new C(0xf08030),p);hc=new C(0x080820).lerp(new C(0xff6010),p);si=p*1.2;ai=.06+p*.3;sun.color.setHex(0xff9040);}
+  else if(t<75){const p=(t-40)/35;sc=new C(0xf08030).lerp(new C(0x87ceeb),p);hc=new C(0xff6010).lerp(new C(0xe89040),p);si=1.2+p;ai=.36+p*.15;sun.color.setHex(0xffeedd);}
+  else if(t<90){const p=(t-75)/15;sc=new C(0x87ceeb).lerp(new C(0x020410),p);hc=new C(0xe89040).lerp(new C(0x080820),p);si=2.2*(1-p);ai=.35*(1-p)+.06;sun.color.setHex(0xff6030);}
+  else{sc=new C(0x020410);hc=new C(0x080820);si=0;ai=.06;sun.color.setHex(0x000022);}
+  skyM.material.color.copy(sc);hz.material.color.copy(hc);sun.intensity=si;amb.intensity=ai;
+  const ng=isN?1.5:(isD?.6:0);nw.forEach(w=>{w.emissiveIntensity=ng*(Math.random()>.3?.8:.2);});
+  ldM.emissiveIntensity=isN?1.8:.4;renderer.toneMappingExposure=isN?1.8:1;
+  tvEl.textContent=t<25?'Night':t<40?'Dawn':t<75?'Day':t<90?'Dusk':'Night';
+}
+ts.addEventListener('input',()=>{setTime(+ts.value);aN=false;document.getElementById('b-night').classList.remove('active');});
+
+let cm2='orbit',flyT=0,aN=false,aT=0;
+function tw(o,to,dur){const fr={x:o.x,y:o.y,z:o.z},st=performance.now();(function tick(){const t=Math.min((performance.now()-st)/(dur*1000),1),e=1-Math.pow(1-t,3);o.x=fr.x+(to.x-fr.x)*e;o.y=fr.y+(to.y-fr.y)*e;o.z=fr.z+(to.z-fr.z)*e;if(t<1)requestAnimationFrame(tick);})();}
+const BC={lobby:{p:{x:0,y:5,z:50},t:{x:0,y:4,z:0}},roof:{p:{x:30,y:CB+50,z:30},t:{x:0,y:CB+5,z:0}},ext:{p:{x:250,y:60,z:0},t:{x:0,y:BH*.4,z:0}}};
+function clrBtns(){['b-orbit','b-fly','b-lobby','b-roof','b-ext','b-xray','b-night'].forEach(id=>document.getElementById(id).classList.remove('active'));}
+document.getElementById('b-orbit').onclick=()=>{clrBtns();document.getElementById('b-orbit').classList.add('active');cm2='orbit';ctrl.enabled=true;tw(camera.position,{x:180,y:80,z:180},1.5);tw(ctrl.target,{x:0,y:BH*.45,z:0},1.5);};
+document.getElementById('b-fly').onclick=()=>{clrBtns();document.getElementById('b-fly').classList.add('active');cm2='fly';flyT=0;ctrl.enabled=false;};
+document.getElementById('b-lobby').onclick=()=>{clrBtns();document.getElementById('b-lobby').classList.add('active');cm2='orbit';ctrl.enabled=true;tw(camera.position,BC.lobby.p,1.6);tw(ctrl.target,BC.lobby.t,1.6);};
+document.getElementById('b-roof').onclick=()=>{clrBtns();document.getElementById('b-roof').classList.add('active');cm2='orbit';ctrl.enabled=true;tw(camera.position,BC.roof.p,1.6);tw(ctrl.target,BC.roof.t,1.6);};
+document.getElementById('b-ext').onclick=()=>{clrBtns();document.getElementById('b-ext').classList.add('active');cm2='orbit';ctrl.enabled=true;tw(camera.position,BC.ext.p,1.6);tw(ctrl.target,BC.ext.t,1.6);};
+document.getElementById('b-xray').onclick=()=>{const b=document.getElementById('b-xray');b.classList.toggle('active');const on=b.classList.contains('active');M.gl.opacity=on?.18:.72;M.gld.opacity=on?.18:.78;coreG.traverse(o=>{if(o.isMesh)o.material.wireframe=on;});};
+document.getElementById('b-night').onclick=()=>{aN=!aN;document.getElementById('b-night').classList.toggle('active',aN);};
+window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
+
+let fps2=60,lT=performance.now(),fr=0;
+const fpsEl=document.getElementById('fps');
+const clk=new T.Clock();
+prog(98,'Ready…');
+setTimeout(()=>{const l=document.getElementById('loading');l.style.opacity='0';setTimeout(()=>l.style.display='none',900);},500);
+
+function animate(){
+  requestAnimationFrame(animate);
+  const dt=clk.getDelta(),now=performance.now();
+  fr++;if(now-lT>500){fps2=Math.round(fr*1000/(now-lT));fr=0;lT=now;}fpsEl.textContent=fps2;
+  if(aN){aT+=dt*4;const t=(Math.sin(aT*.3)*.5+.5)*100;ts.value=t;setTime(t);}
+  if(cm2==='fly'){flyT+=dt*.08;const r=160+Math.sin(flyT*.5)*60,h=30+(Math.sin(flyT*.25)*.5+.5)*(BH+30);camera.position.set(Math.cos(flyT)*r,h,Math.sin(flyT)*r);camera.lookAt(0,h*.55,0);}
+  const blk=Math.sin(now*.003)>.7;bkL.intensity=blk?8:0;bk.material.emissiveIntensity=blk?3:.2;
+  M.wat.emissiveIntensity=.08+Math.sin(now*.001)*.04;M.wat.emissive=new T.Color(0x2288aa);
+  twr.rotation.z=Math.sin(now*.0004)*.0008;coreG.rotation.z=twr.rotation.z;
+  rc.setFromCamera(mu,camera);
+  const obs2=[];scene.traverse(o=>{if(o.isMesh&&o.userData.label)obs2.push(o);});
+  const hits=rc.intersectObjects(obs2);
+  if(hits.length){const h0=hits[0].object;ttEl.textContent=h0.userData.label||'';tbEl.textContent=h0.userData.desc||'';tip.style.display='block';if(h0.userData.floorIndex!==undefined){const fi=h0.userData.floorIndex;fnEl.textContent=fi+1;tks.forEach(t=>t.el.classList.toggle('active',t.f===fi+1));}}else tip.style.display='none';
+  ctrl.update();renderer.render(scene,camera);
+}
+setTime(65);animate();
 </script>
-<script type="module" src="main.js"></script>
 </body>
 </html>
