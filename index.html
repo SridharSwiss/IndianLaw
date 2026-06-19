@@ -95,8 +95,16 @@
 
 <div id="tooltip"><strong id="tt"></strong><span id="tb"></span></div>
 
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.min.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"
+  }
+}
+</script>
+
 <script>
-// Catch CDN/module load failures before the module runs
 window.addEventListener('error',function(e){
   var lt=document.getElementById('lt');
   if(lt){lt.textContent='Error: '+(e.message||'unknown');lt.style.color='#ff6644';}
@@ -108,9 +116,9 @@ window.addEventListener('unhandledrejection',function(e){
 </script>
 
 <script type="module">
-import*as T from'https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.min.js';
-import{OrbitControls}from'https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/controls/OrbitControls.js';
-import{RoomEnvironment}from'https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/environments/RoomEnvironment.js';
+import*as T from'three';
+import{OrbitControls}from'three/addons/controls/OrbitControls.js';
+import{RoomEnvironment}from'three/addons/environments/RoomEnvironment.js';
 
 const pf=document.getElementById('pf'),lt=document.getElementById('lt');
 const prog=(p,msg)=>{pf.style.width=p+'%';if(msg)lt.textContent=msg;};
