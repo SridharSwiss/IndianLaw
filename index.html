@@ -95,6 +95,18 @@
 
 <div id="tooltip"><strong id="tt"></strong><span id="tb"></span></div>
 
+<script>
+// Catch CDN/module load failures before the module runs
+window.addEventListener('error',function(e){
+  var lt=document.getElementById('lt');
+  if(lt){lt.textContent='Error: '+(e.message||'unknown');lt.style.color='#ff6644';}
+});
+window.addEventListener('unhandledrejection',function(e){
+  var lt=document.getElementById('lt');
+  if(lt){lt.textContent='CDN load failed — check connection';lt.style.color='#ff6644';}
+});
+</script>
+
 <script type="module">
 import*as T from'https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.min.js';
 import{OrbitControls}from'https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/controls/OrbitControls.js';
@@ -102,14 +114,16 @@ import{RoomEnvironment}from'https://cdn.jsdelivr.net/npm/three@0.165.0/examples/
 
 const pf=document.getElementById('pf'),lt=document.getElementById('lt');
 const prog=(p,msg)=>{pf.style.width=p+'%';if(msg)lt.textContent=msg;};
+const isMobile=/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+try{
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 const FC=52,FH=4.75,BH=FC*FH,BW=42,BD=38,SS=38,PF=6,PH=PF*FH;
 
 // ── Renderer ──────────────────────────────────────────────────────────────────
 const cc=document.getElementById('cc');
-const renderer=new T.WebGLRenderer({antialias:true,logarithmicDepthBuffer:true});
-renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+const renderer=new T.WebGLRenderer({antialias:!isMobile,logarithmicDepthBuffer:!isMobile,powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(devicePixelRatio,isMobile?1.5:2));
 renderer.setSize(innerWidth,innerHeight);
 renderer.shadowMap.enabled=true;
 renderer.shadowMap.type=T.PCFSoftShadowMap;
@@ -298,32 +312,28 @@ const neopolisTowers=[
 neopolisTowers.forEach(([x,z,w,d,h,label,desc],i)=>{
   const gm=[M.itGl1,M.itGl2,M.itGl3][i%3];
   const bldg=new T.Group();
-  // Core
-  const core=box(w*.38,h,d*.35,mk({color:0x9a9898,roughness:.7,metalness:.05}));core.position.y=h/2;bldg.add(core);
-  // Glass curtain wall panels
-  const rows=Math.floor(h/4),cols=Math.floor(w/3.5);
-  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
-    const gp=new T.Mesh(new T.BoxGeometry(3.2,3.5,.08),gm);
-    gp.position.set(-w/2+(c+.5)*(w/cols),3+r*4,d/2+.04);bldg.add(gp);
-    const gp2=gp.clone();gp2.position.z=-d/2-.04;bldg.add(gp2);
+  if(isMobile){
+    // Mobile: single glass box per tower
+    const mb=new T.Mesh(new T.BoxGeometry(w,h,d),gm);mb.position.y=h/2;mb.castShadow=mb.receiveShadow=true;bldg.add(mb);
+    const pb=box(w+6,4,d+6,mk({color:0xb8b0a0,roughness:.6,metalness:.1}));pb.position.y=2;bldg.add(pb);
+  }else{
+    const core=box(w*.38,h,d*.35,mk({color:0x9a9898,roughness:.7,metalness:.05}));core.position.y=h/2;bldg.add(core);
+    const rows=Math.floor(h/4),cols=Math.floor(w/3.5);
+    for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+      const gp=new T.Mesh(new T.BoxGeometry(3.2,3.5,.08),gm);gp.position.set(-w/2+(c+.5)*(w/cols),3+r*4,d/2+.04);bldg.add(gp);
+      const gp2=gp.clone();gp2.position.z=-d/2-.04;bldg.add(gp2);
+    }
+    const colsD=Math.floor(d/3.5);
+    for(let r=0;r<rows;r++)for(let c=0;c<colsD;c++){
+      const gp=new T.Mesh(new T.BoxGeometry(.08,3.5,3.2),gm);gp.position.set(w/2+.04,3+r*4,-d/2+(c+.5)*(d/colsD));bldg.add(gp);
+      const gp2=gp.clone();gp2.position.x=-w/2-.04;bldg.add(gp2);
+    }
+    const sm=mk({color:0x506070,roughness:.4,metalness:.5});
+    for(let r=0;r<rows;r+=3){const sb=box(w+.4,.4,d+.4,sm);sb.position.set(0,r*4,.0);bldg.add(sb);}
+    const pbase=box(w+6,4,d+6,mk({color:0xb8b0a0,roughness:.6,metalness:.1}));pbase.position.y=2;bldg.add(pbase);
+    const par=box(w+.5,2,d+.5,mk({color:0x909090,roughness:.5,metalness:.2}));par.position.y=h+1;bldg.add(par);
   }
-  const colsD=Math.floor(d/3.5);
-  for(let r=0;r<rows;r++)for(let c=0;c<colsD;c++){
-    const gp=new T.Mesh(new T.BoxGeometry(.08,3.5,3.2),gm);
-    gp.position.set(w/2+.04,3+r*4,-d/2+(c+.5)*(d/colsD));bldg.add(gp);
-    const gp2=gp.clone();gp2.position.x=-w/2-.04;bldg.add(gp2);
-  }
-  // Spandrel bands
-  const sm=mk({color:0x506070,roughness:.4,metalness:.5});
-  for(let r=0;r<rows;r+=3){const sb=box(w+.4,.4,d+.4,sm);sb.position.set(0,r*4,.0);bldg.add(sb);}
-  // Podium base
-  const pbase=box(w+6,4,d+6,mk({color:0xb8b0a0,roughness:.6,metalness:.1}));pbase.position.y=2;bldg.add(pbase);
-  // Parapet
-  const par=box(w+.5,2,d+.5,mk({color:0x909090,roughness:.5,metalness:.2}));par.position.y=h+1;bldg.add(par);
-  bldg.position.set(x,0,z);
-  bldg.userData={label,desc};
-  scene.add(bldg);
-  // Campus plaza connecting
+  bldg.position.set(x,0,z);bldg.userData={label,desc};scene.add(bldg);
   const plaza=new T.Mesh(new T.PlaneGeometry(w+12,d+12),M.pave);plaza.rotation.x=-Math.PI/2;plaza.position.set(x,.03,z);add(plaza);
 });
 
@@ -550,19 +560,24 @@ for(let f=PF;f<FC;f++){
   const sl=box(fw5+.5,.35,fd+.5,f%2?M.con2:M.con);sl.position.y=y+.175;
   sl.userData={floorIndex:f,label:`Floor ${f+1}`,desc:`Level ${f+1} — ${f<8?'Retail / F&B':f<15?'Grade-A Office':f<30?'Premium IT Office':f<42?'Corporate Suites':f<50?'Sky Club / Hotel':'Penthouse'}`};
   twr.add(sl);twr.userData.floors.push(sl);
-  const cols=Math.floor(fw5/3.5);
-  for(let c=0;c<cols;c++){
-    const gp1=new T.Mesh(new T.BoxGeometry(3.2,gh,.08),gmat);gp1.position.set(-fw5/2+(c+.5)*(fw5/cols),y+gh/2+.4,fd/2+.04);twr.add(gp1);
-    const gp2=new T.Mesh(new T.BoxGeometry(3.2,gh,.08),gmat);gp2.position.set(-fw5/2+(c+.5)*(fw5/cols),y+gh/2+.4,-fd/2-.04);twr.add(gp2);
+  const wm2=mk({color:0xfff5d0,roughness:1,metalness:0,emissive:0xffd060,emissiveIntensity:0});nw.push(wm2);
+  if(isMobile){
+    // Mobile: one glass shell per floor instead of individual panels
+    const shell=box(fw5,gh,fd,gmat);shell.position.set(0,y+gh/2+.4,0);twr.add(shell);
+  }else{
+    const cols=Math.floor(fw5/3.5);
+    for(let c=0;c<cols;c++){
+      const gp1=new T.Mesh(new T.BoxGeometry(3.2,gh,.08),gmat);gp1.position.set(-fw5/2+(c+.5)*(fw5/cols),y+gh/2+.4,fd/2+.04);twr.add(gp1);
+      const gp2=new T.Mesh(new T.BoxGeometry(3.2,gh,.08),gmat);gp2.position.set(-fw5/2+(c+.5)*(fw5/cols),y+gh/2+.4,-fd/2-.04);twr.add(gp2);
+    }
+    const colsD=Math.floor(fd/3.5);
+    for(let c=0;c<colsD;c++){['E','W'].forEach(side=>{const gp=new T.Mesh(new T.BoxGeometry(.08,gh,3.2),gmat);gp.position.set(side==='E'?fw5/2+.04:-fw5/2-.04,y+gh/2+.4,-fd/2+(c+.5)*(fd/colsD));twr.add(gp);});}
+    const ms=fw5/cols;for(let c=0;c<=cols;c++){[fd/2,-fd/2].forEach(z=>{const ml=box(.12,FH,.14,M.mul);ml.position.set(-fw5/2+c*ms,y+FH/2,z);twr.add(ml);});}
+    const wc=Math.floor(fw5/3.5);
+    for(let c=0;c<wc;c++){if(Math.random()>.7)continue;const sd=Math.random()>.5?1:-1;const wp=new T.Mesh(new T.PlaneGeometry(2,2.5),wm2);wp.position.set(-fw5/2+(c+.5)*(fw5/wc),y+FH*.55,sd>0?fd/2+.12:-fd/2-.12);if(sd<0)wp.rotation.y=Math.PI;add(wp);}
   }
-  const colsD=Math.floor(fd/3.5);
-  for(let c=0;c<colsD;c++){['E','W'].forEach(side=>{const gp=new T.Mesh(new T.BoxGeometry(.08,gh,3.2),gmat);gp.position.set(side==='E'?fw5/2+.04:-fw5/2-.04,y+gh/2+.4,-fd/2+(c+.5)*(fd/colsD));twr.add(gp);});}
-  const ms=fw5/cols;for(let c=0;c<=cols;c++){[fd/2,-fd/2].forEach(z=>{const ml=box(.12,FH,.14,M.mul);ml.position.set(-fw5/2+c*ms,y+FH/2,z);twr.add(ml);});}
   if(f%4===0||isSB){const sp=box(fw5+.6,.45,fd+.6,M.org);sp.position.y=y+.22;twr.add(sp);}
   if(f===25||f===38){const mf=box(fw5+1,FH*.8,fd+1,mk({color:0x555566,roughness:.6,metalness:.3}));mf.position.y=y+FH*.4;mf.userData={label:`Mechanical Floor ${f+1}`,desc:'HVAC, chilled-water plant, electrical switchgear, sky-lobby transfer floor'};twr.add(mf);}
-  const wm2=mk({color:0xfff5d0,roughness:1,metalness:0,emissive:0xffd060,emissiveIntensity:0});nw.push(wm2);
-  const wc=Math.floor(fw5/3.5);
-  for(let c=0;c<wc;c++){if(Math.random()>.7)continue;const sd=Math.random()>.5?1:-1;const wp=new T.Mesh(new T.PlaneGeometry(2,2.5),wm2);wp.position.set(-fw5/2+(c+.5)*(fw5/wc),y+FH*.55,sd>0?fd/2+.12:-fd/2-.12);if(sd<0)wp.rotation.y=Math.PI;add(wp);}
 }
 
 // Mega-columns + trusses
@@ -673,6 +688,11 @@ function animate(){
   ctrl.update();renderer.render(scene,camera);
 }
 setTime(65);animate();
+}catch(err){
+  document.getElementById('lt').textContent='Init error: '+err.message;
+  document.getElementById('lt').style.color='#ff6644';
+  console.error(err);
+}
 </script>
 </body>
 </html>
