@@ -1,0 +1,3 @@
+[submodule "indian-law-plugin"]
+	path = indian-law-plugin
+	url = https://github.com/shashionline/indian-law-plugin.git
